@@ -13,7 +13,7 @@ Le distro supportate sono:
     * **Fedora**
     * **CentOS**
  
- Il funzionamento **non** è garantito e, trattandosi di un software in via di sviluppo, può presentare numerosi bug.
+ Il funzionamento **non** è garantito e, trattandosi di un applicativo in via di sviluppo, può presentare numerosi bug.
  In tal caso, è opportuno segnalarli nella sezione **Issues** di questo repo.
  
  Per maggiori informazioni, si consulti la wiki. 
