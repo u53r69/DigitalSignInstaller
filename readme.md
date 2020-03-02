@@ -2,6 +2,8 @@
 ## Installazione automatica dei driver dei lettori per la firma digitale su Linux
 ### Introduzione
 **Digital Sign Installer** è uno script Bash che semplifica e automatizza l'installazione dei driver di Card Reader su Linux.
+Il nome deriva dal fatto che la sua creazione è stata ispirata dall'esigenza di utilizzare la firma digitale su Ubuntu come autenticazione per la **Cancelleria Telematica** .
+
 Le distro supportate sono:
   * **Debian** e derivate, come ad esempio:
     * **Ubuntu** 
