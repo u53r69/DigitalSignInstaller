@@ -7,7 +7,6 @@
 # * Aggiungere barra progressiva nel download (PROBLEMATICO)
 # * Migliorare controllo errori
 # * Modularizzare maggiormente il codice
-# * Trovare un modo sicuro di gestire l'immissione della password
 # * Capire come individuare i file da installare in modo intelligente
 ###############################################################
 
@@ -15,7 +14,6 @@
 
 function chooseLector(){ # Funzione per scegliere il proprio lettore
     zenity --title="DSInstaller" --list --text="Scegli il tuo lettore" --column="Nome" --column="Marca"\
-    "ArubaKey"  "Aruba"\
     "miniLector POCKET" "Bit4id"\
     "miniLector EVO"    "Bit4id"\
     "miniLector S EVO"  "Bit4id"\
@@ -25,13 +23,9 @@ function chooseLector(){ # Funzione per scegliere il proprio lettore
 }
 
 function chooseOS() { # Funzione per indicare il proprio sistema operativo
-  zenity --title="DSInstaller" --list --text="Scegli il tuo lettore" --column="Distro" --column="Formato Pacchetti"\
-  "CentOS"  ".rpm"\
-  "Debian" ".deb"\
-  "Fedora"    ".rpm"\
-  "Linux Mint"  ".deb"\
-  "Red Hat"  ".rpm"\
-  "Ubuntu"  ".deb"\
+  zenity --title="DSInstaller" --list --text="Scegli il tuo sistema operativo" --column="Distro" --column="Formato Pacchetti"\
+  "Debian, Ubuntu, Linux Mint"  ".deb"\
+  "Fedora, Red Hat, CentOS"    ".rpm"\
   --height="300" --width="250"
 }
 
@@ -44,7 +38,6 @@ function downloadError() { # Funzione per la visualizzazione del messaggio di er
   zenity --title="DSInstaller" --error --text="Errore nel download dei drivers. Assicurarsi di avere i permessi necessari ed essere connessi ad Internet." --width="400" --height="200"
   exit 1
 }
-#####################################
 
 Z_VERSION=$(zenity --version) #Controllo che Zenity sia installato
 if [[ -z $Z_VERSION ]] # Se la variabile $Z_VERSION è vuota, significa che Zenity non è stato installato
@@ -75,41 +68,35 @@ else
 
 # Sulla base di quanto scelto dall'utente, la variabile $URL assumerà un valore appropriato, ossia l'URL del file da scaricare
 
-########## ArubaKey #####################
-  if [[ $NO_SPACE_LECTOR = "ArubaKey" ]] # Scelta di ArubaKey
-    then
-      URL=""
-#########################################
-
 ########## miniLector POCKET ############
-elif [[ $NO_SPACE_LECTOR = "miniLector_POCKET" ]] # Scelta di miniLector POCKET
+if [[ $LECTOR = "miniLector POCKET" ]] # Scelta di miniLector POCKET
   then
-    URL=""
+    URL="http://resources.bit4id.com/files/drivers/linux/dr_minilector_it_linux.zip"
 #########################################
 
 ########## miniLector EVO ############
-elif [[ $NO_SPACE_LECTOR = "miniLector_EVO" ]] # Scelta di miniLector EVO
+elif [[ $LECTOR = "miniLector EVO" ]] # Scelta di miniLector EVO
   then
-    URL=""
+    URL="http://resources.bit4id.com/files/drivers/linux/dr_minilector_evo_it_linux.zip"
 ######################################
 
 ########## miniLector S EVO ############
-elif [[ $NO_SPACE_LECTOR = "miniLector_S_EVO" ]] # Scelta di miniLector S EVO
+elif [[ $LECTOR = "miniLector S EVO" ]] # Scelta di miniLector S EVO
   then
     # https://resources.bit4id.com/files/drivers/linux/dr_minilector_it_linux.zip
     URL="https://resources.bit4id.com/files/drivers/linux/dr_minilector_it_linux.zip"
 #######################################
 
 ########## miniLector Piano ################
-elif [[ $NO_SPACE_LECTOR = "miniLector_Piano" ]] # Scelta di miniLector Piano
+elif [[ $LECTOR = "miniLector Piano" ]] # Scelta di miniLector Piano
   then
-    URL=""
+    URL="http://resources.bit4id.com/files/drivers/linux/dr_minilector_evo_it_linux.zip"
 ############################################
 
 ########## miniLector Spaceship ############
-elif [[ $NO_SPACE_LECTOR = "miniLector_Spaceship" ]] # Scelta di miniLector Spaceship
+elif [[ $LECTOR = "miniLector Spaceship" ]] # Scelta di miniLector Spaceship
   then
-    URL=""
+    URL="http://resources.bit4id.com/files/drivers/linux/dr_minilector_spaceship_it_linux.zip"
 ############################################
 fi
 ###################### Download dei driver #######################
@@ -121,6 +108,11 @@ fi
   fi
   zenity --info --title="DSInstaller" --text="Il download è terminato. Premere OK per procedere con l'installazione" --width="400" --height="200"
   unzip $FILE_DOWNLOAD -d $WORKING_PATH # Scompattamento dell'archivio scaricato
-  
+  PASSWORD=$(zenity --password --title="DSInstaller" --text="Inserisci la tua password per procedere all'installazione. La finestra si chiuderà temporaneamente. <b>NON CHIUDERE IL TERMINALE</b>" --width="400" --height="200")
+  if [[ $OS = "Debian, Ubuntu, Linux Mint" ]]; then
+    echo $PASSWORD | sudo -S "apt install -y ./*.deb" # Problemi di dipendenze su amd64 + Errore "comando non trovato"
+  elif [[ $OS =  "Fedora, Red Hat, CentOS" ]]; then
+    echo $PASSWORD | sudo -S "rpm -i *.rpm" # Da rivedere
+  fi
 ##################################################################
 fi
